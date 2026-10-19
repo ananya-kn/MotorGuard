@@ -9,6 +9,7 @@ import xgboost as xgb
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from typing import Optional
 from pydantic import BaseModel
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "ml"))
@@ -29,7 +30,7 @@ nodes, clients = {}, set()
 
 class Window(BaseModel):
     node_id: str
-    ts: float | None = None
+    ts: Optional[float] = None
     rms: float; crest: float; kurt: float; f_run: float
     a1x: float; a2x: float; a3x: float; r21: float
     e_low: float; e_mid: float; e_high: float; centroid: float
