@@ -32,4 +32,5 @@ python docs/mount_resonance.py        # numbers used on the CAD slide
 `ml/` features, simulator, training | `server/` FastAPI + dashboard + simulator node | `firmware/` ESP32 node + host tests | `cad/` CadQuery -> STEP/STL | `docs/` results, limits, protocol, renders | `hardware/` BOM, pinout | `tools/` serial collector, STL renderer
 
 Read `docs/known_limits.md` before presenting.
-# MotorGuard
+
+> Starter code (simulator, features, server, firmware, CAD scripts) was generated with AI assistance (Claude) and is being adapted, tested and extended by the team on real hardware.

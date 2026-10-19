@@ -1,0 +1,11 @@
+numpy
+scikit-learn
+xgboost
+matplotlib
+fastapi
+uvicorn[standard]
+requests
+pydantic
+pyserial
+cadquery
+numpy-stl
