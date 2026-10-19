@@ -1,0 +1,25 @@
+{
+ "classes": [
+  "healthy",
+  "imbalance",
+  "misalignment",
+  "looseness",
+  "bearing",
+  "overload"
+ ],
+ "features": [
+  "rms_rel",
+  "a1x_rel",
+  "a2x_rel",
+  "a3x_rel",
+  "e_low_rel",
+  "e_mid_rel",
+  "e_high_rel",
+  "cur_rms_rel",
+  "crest",
+  "kurt",
+  "r21",
+  "centroid",
+  "temp_rise"
+ ]
+}
