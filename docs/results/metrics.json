@@ -1,0 +1,25 @@
+{
+ "note": "Synthetic data unless --real is used. Held-out = unseen machines.",
+ "n_train_windows": 10360,
+ "n_test_windows": 4440,
+ "n_test_machines": 24,
+ "accuracy": 0.9684684684684685,
+ "healthy_false_alarm_rate": 0.004166666666666667,
+ "fault_detect_recall_any": 0.9753333333333334,
+ "per_class_recall": {
+  "healthy": 0.9958333333333333,
+  "imbalance": 0.95,
+  "misalignment": 0.9566666666666667,
+  "looseness": 0.9816666666666667,
+  "bearing": 0.89,
+  "overload": 0.9983333333333333
+ },
+ "auc_healthy_vs_fault": 0.9939467592592593,
+ "recall_by_severity": {
+  "0.0-0.1": 0.8235294117647058,
+  "0.1-0.2": 0.931740614334471,
+  "0.2-0.4": 0.9810725552050473,
+  "0.4-0.7": 1.0,
+  "0.7-1.0": 1.0
+ }
+}

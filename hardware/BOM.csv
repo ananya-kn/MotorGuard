@@ -1,0 +1,11 @@
+component,part,qty,source,approx_inr
+MCU,ESP32-WROOM DevKit,1,local,450
+Vibration,MPU6050 module (GY-521),1,local,150
+Current (AC motors),SCT-013-030 split-core CT (voltage output),1,local,350
+ADC (for CT),ADS1115 module,1,local,300
+Current (DC test rig),INA219 module,1,local,150
+Temperature,DS18B20 waterproof probe,1,local,120
+Test rig motor,12 V geared DC motor + fan,1,local,400
+Motor driver,L298N module,1,local,180
+Power,12 V 2 A adapter + LM2596 buck,1,local,350
+Enclosure and misc,ABS box / printed enclosure + wires + fuse + 4.7k resistor,1,local,400
