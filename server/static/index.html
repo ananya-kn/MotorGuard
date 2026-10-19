@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MotorGuard</title>
+<style>
+:root{--navy:#1E3A8A;--g:#059669;--r:#DC2626;--a:#F59E0B;--bg:#F8FAFC;--bd:#E2E8F0;--t:#334155}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--t)}
+header{background:#0F172A;color:#fff;padding:14px 20px;font-weight:700;display:flex;justify-content:space-between}
+#alert{display:none;background:var(--r);color:#fff;padding:12px 20px;font-weight:600}
+main{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px;padding:16px}
+.card{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px}
+.top{display:flex;justify-content:space-between;align-items:center}.big{font-size:44px;font-weight:800}
+.pill{padding:4px 10px;border-radius:99px;font-size:12px;font-weight:700;color:#fff}
+canvas{width:100%;height:130px;margin-top:8px}.row{display:flex;gap:16px;font-size:13px;margin-top:6px}
+.bar{height:8px;background:var(--bd);border-radius:4px;overflow:hidden;margin-top:8px}.bar>i{display:block;height:100%;background:var(--navy)}
+#conn{font-size:12px;opacity:.8}
+</style></head><body>
+<header><span>MotorGuard</span><span id="conn">connecting...</span></header><div id="alert"></div><main id="grid"></main>
+<script>
+const grid=document.getElementById('grid'),alertEl=document.getElementById('alert'),cards={};
+const col=h=>h>=70?'var(--g)':h>=40?'var(--a)':'var(--r)';
+function card(id){
+  if(cards[id])return cards[id];
+  const el=document.createElement('div');el.className='card';
+  el.innerHTML=`<div class="top"><b>${id}</b><span class="pill" data-k="pill"></span></div><div class="big" data-k="h">--</div>
+  <div data-k="label"></div><div class="bar"><i data-k="prog" style="width:0"></i></div>
+  <canvas data-k="cv" width="640" height="260"></canvas>
+  <div class="row"><span>vib <b data-k="v">-</b> g</span><span>current <b data-k="c">-</b> A</span><span>temp <b data-k="t">-</b> C</span><span data-k="ttf"></span></div>`;
+  grid.appendChild(el);cards[id]={el,hist:[],q:k=>el.querySelector(`[data-k=${k}]`)};return cards[id];
+}
+function draw(c){
+  const cv=c.q('cv'),g=cv.getContext('2d'),W=cv.width,H=cv.height;g.clearRect(0,0,W,H);
+  g.strokeStyle='#E2E8F0';g.lineWidth=2;[0.25,.5,.75].forEach(y=>{g.beginPath();g.moveTo(0,H*y);g.lineTo(W,H*y);g.stroke()});
+  g.strokeStyle='#1E3A8A';g.lineWidth=3;g.beginPath();
+  c.hist.forEach((h,i)=>{const x=i/(Math.max(c.hist.length-1,1))*W,y=H-(h/100)*H;i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();
+}
+function onMsg(m){
+  const c=card(m.node_id);c.hist.push(m.health);if(c.hist.length>120)c.hist.shift();
+  c.q('h').textContent=m.health;c.q('h').style.color=col(m.health);
+  const pill=c.q('pill');pill.textContent=m.status==='learning'?'LEARNING':m.status==='alarm'?'ALARM':'OK';
+  pill.style.background=m.status==='alarm'?'var(--r)':m.status==='learning'?'#64748B':'var(--g)';
+  c.q('label').textContent=m.status==='learning'?'Learning this machine\'s healthy baseline':'State: '+m.label;
+  c.q('prog').style.width=(m.status==='learning'?m.progress*100:0)+'%';
+  if(m.vib_rms!==undefined){c.q('v').textContent=m.vib_rms.toFixed(3);c.q('c').textContent=m.cur_rms.toFixed(2);c.q('t').textContent=m.temp.toFixed(1)}
+  c.q('ttf').textContent=m.ttf_s?('~'+Math.max(1,Math.round(m.ttf_s/60))+' min to failure'):'';
+  if(m.status==='alarm'){alertEl.style.display='block';alertEl.textContent=m.node_id+': '+m.label+' suspected, health '+m.health+'/100'}
+  else if(Object.values(cards).every(x=>true)&&m.status==='ok'){alertEl.style.display='none'}
+  draw(c);
+}
+function connect(){
+  const ws=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws');
+  ws.onopen=()=>{document.getElementById('conn').textContent='live';setInterval(()=>ws.readyState===1&&ws.send('ping'),15000)};
+  ws.onmessage=e=>onMsg(JSON.parse(e.data));
+  ws.onclose=()=>{document.getElementById('conn').textContent='reconnecting...';setTimeout(connect,2000)};
+}
+connect();
+</script></body></html>
