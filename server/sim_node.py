@@ -11,6 +11,7 @@ ap.add_argument("--fault", default="imbalance", choices=sim.CLASSES[1:]); ap.add
 ap.add_argument("--baseline", type=int, default=30); ap.add_argument("--healthy", type=int, default=20); ap.add_argument("--ramp", type=int, default=40)
 a = ap.parse_args()
 rng = np.random.default_rng(); m = sim.new_machine(rng)
+requests.post(a.url + '/reset/' + a.node, timeout=5)  # new random machine each run: forget the old baseline
 plan = [("healthy", 0.0)] * (a.baseline + a.healthy) + [(a.fault, 0.05 + 0.95 * i / a.ramp) for i in range(a.ramp)]
 for i, (f, s) in enumerate(plan):
     d = sim.features(m, f, s, rng); d["node_id"] = a.node
