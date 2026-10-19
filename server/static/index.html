@@ -33,7 +33,7 @@ function draw(c){
   c.hist.forEach((h,i)=>{const x=i/(Math.max(c.hist.length-1,1))*W,y=H-(h/100)*H;i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();
 }
 function onMsg(m){
-  const c=card(m.node_id);c.hist.push(m.health);if(c.hist.length>120)c.hist.shift();
+  const c=card(m.node_id);if(m.status==='learning'){c.hist=[];alertEl.style.display='none'}c.hist.push(m.health);if(c.hist.length>120)c.hist.shift();
   c.q('h').textContent=m.health;c.q('h').style.color=col(m.health);
   const pill=c.q('pill');pill.textContent=m.status==='learning'?'LEARNING':m.status==='alarm'?'ALARM':'OK';
   pill.style.background=m.status==='alarm'?'var(--r)':m.status==='learning'?'#64748B':'var(--g)';
