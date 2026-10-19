@@ -83,11 +83,16 @@ async def ingest(w: Window):
     x = F.normalise(d, s["base"])[None, :]
     p = BOOSTER.predict(xgb.DMatrix(x, feature_names=META["features"]))[0]
     pf = float(1 - p[0]); label = CLASSES[int(np.argmax(p))]
+    s['ema'] = 0.75 * s.get('ema', 0.0) + 0.25 * pf
+    s.setdefault("labels", deque(maxlen=5)).append(label)
+    if label != "healthy":
+        nh = [l for l in s["labels"] if l != "healthy"]
+        label = max(set(nh), key=nh.count)
     s["votes"].append(label != "healthy")
     s["hist"].append((ts, pf))
     alarm = len(s["votes"]) == VOTES and all(s["votes"])
     ttf = ttf_seconds(s["hist"])
-    out = dict(node_id=w.node_id, ts=ts, status="alarm" if alarm else "ok", label=label, health=round(100 * (1 - pf)), p_fault=round(pf, 3), ttf_s=ttf,
+    out = dict(node_id=w.node_id, ts=ts, status="alarm" if alarm else "ok", label=label, health=round(100 * (1 - s['ema'])), p_fault=round(pf, 3), ttf_s=ttf,
                probs={c: round(float(v), 3) for c, v in zip(CLASSES, p)}, vib_rms=d["rms"], cur_rms=d["cur_rms"], temp=d["temp"])
     if alarm and not s["alerted"]:
         s["alerted"] = True
