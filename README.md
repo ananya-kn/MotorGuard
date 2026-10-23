@@ -1,4 +1,4 @@
-# MotorGuarddd
+# MotorGuard
 
 Clip-on edge-AI predictive maintenance node for small workshops: vibration + current + temperature -> fault class, health score, time to failure, phone alert.
 Vishwakarma Awards 2026-27, Stage 2 (VK26-IITI-AHM-0131), Team Vibronix, Cambridge Institute of Technology, Bengaluru.
